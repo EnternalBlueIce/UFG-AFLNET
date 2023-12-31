@@ -10,33 +10,14 @@
 
 
 //从path_bits中提取路径状态序列
-/*u32 **extract_paths(u32 *path_bits, u32 *path_bytes, u32 path_count) {
-    u32 **paths = malloc(path_count * sizeof(u32 *));  // 一次性分配足够的内存
 
-    u32 index = 0;
-
-    for (u32 i = 0; i < path_count; i++) {
-        if (path_bytes[i]) {
-            u32 *path = malloc(path_bytes[i] * sizeof(u32));
-            memcpy(path, path_bits + index, path_bytes[i] * sizeof(u32));  // 使用 memcpy 进行内存拷贝
-
-            paths[i] = path;
-
-            index += path_bytes[i];
-        } else {
-            paths[i] = NULL;  // 处理字节为 0 的情况，将路径设置为 NULL
-        }
-    }
-    return paths;
-}*/
 u32 **extract_paths(u32 *path_bits, u32 *path_bytes, u32 path_count) {
-    printf("extract_paths=====path_bits%s\n=======path_coun%dt=end\n", path_bits, path_count);
-    //========check
+//    printf("extract_paths=====path_bits%s\n=======path_count:%d=end\n", path_bits, path_count);
+//    ========check
 //    u32 sum = 0;
 //    for (u32 t = 0; t <  path_count; t++){
 //        printf("===index%d====start%d\n", t, path_bytes[t]);
 //    }
-//    printf("path_length%d\n", path_length(path_bits));
     u32 **paths = malloc(path_count * sizeof(u32 *));
     if (paths == NULL) {
         // 内存分配失败，进行错误处理
@@ -46,18 +27,28 @@ u32 **extract_paths(u32 *path_bits, u32 *path_bytes, u32 path_count) {
     if (path_bytes == NULL){
         return NULL;
     }
-    for (u32 i = 0; i < path_count-1; i++) {
-        u32 start = path_bytes[i] * sizeof(u32);
-        u32 len =  path_bytes[i+1] -path_bytes[i];
+
+    for (u32 i = 0; i < path_count; i++) {
+        u32 start = path_bytes[i] ;
+        u32 end=(i < path_count - 1) ? path_bytes[i + 1] : path_length(path_bits);
+        u32 len =  end - start;
+        if(len==0){
+            paths[i]=NULL;
+            continue;
+        }
         u32 *path = malloc(len * sizeof(u32));
-        memcpy(path, path_bits + start, len);
+        memcpy(path, path_bits + start, len * sizeof(u32));
         paths[i] = path;
     }
-    int lastLen = path_length(path_bits) - path_bytes[path_count -1]+1;
-    u32 *lastPath = malloc(lastLen * sizeof(u32));
-    paths[path_count -1] = lastPath;
+
+//    for (u32 i = 0; i < path_count; i++) {
+//        printf("paths[%d]:%s\n",i,paths[i]);
+//    }
+
     return paths;
 }
+
+
 
 // 释放动态分配的内存
 void free_paths(u32 **paths, u32 path_count) {
@@ -86,6 +77,7 @@ extern u32 levenshtein_distance(u32 *point1, u32 *point2) {
     u32 len1 = path_length(point1);
     u32 len2 = path_length(point2);
     u32 res=0;
+    //printf("len1:%d--len2:%d\n",len1,len2);
 
     u32 dp[len1][len2];
 
@@ -103,7 +95,7 @@ extern u32 levenshtein_distance(u32 *point1, u32 *point2) {
             }
         }
     }
-    res = dp[len1 - 1][len2 - 1];
+    if (len1 > 0 && len2 > 0) res = dp[len1 - 1][len2 - 1];
     //是否需要释放dp空间
     return res;
 }

@@ -20,8 +20,8 @@ typedef struct {
     u32 avg_distance;           /*当前核心点至其他点的中心*/
     u32 *core;                   /*以一个整数数组表示该状态的核心点*/
     u8 is_covered;              /* has this state been covered */
-    //u32 paths;                  /* total number of paths exercising this state */
-    //u32 paths_discovered;       /* total number of new paths that have been discovered when this state is targeted/selected */
+    u32 paths;                  /* total number of paths exercising this state */
+    u32 paths_discovered;       /* total number of new paths that have been discovered when this state is targeted/selected */
     u32 selected_times;         /* total number of times this state has been targeted/selected */
     u32 fuzzs;                  /* Total number of fuzzs (i.e., inputs generated) */
     u32 score;                  /* current score of the state */
@@ -37,10 +37,13 @@ typedef struct {
 KHASH_INIT(phms,khint32_t,path_state_info_t *, 1, kh_int_hash_func, kh_int_hash_equal)
 
 //初始化一个哈希表，存储所有的路径状态id,SET只有键，这个后面看用SET还是MAP
-KHASH_SET_INIT_INT(phs32)
+//KHASH_SET_INIT_INT(phs32)
 
 //初始化一个哈希表，状态码——路径状态id的list
 KHASH_INIT(s2path,khint32_t,khint32_t *, 1, kh_int_hash_func, kh_int_hash_equal)
+
+//初始化一个哈希表，状态码——路径状态的大小
+KHASH_INIT(s2s,khint32_t,khint32_t, 1, kh_int_hash_func, kh_int_hash_equal)
 
 //获取unsigned int *的长度
 u32 path_length(u32 *point);
