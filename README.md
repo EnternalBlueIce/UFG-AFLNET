@@ -74,5 +74,18 @@ valgrind ./afl-fuzz -d \
   -E \
   -K \
   -R /home/nsas2020/fuzz/targetProcess/live555/testProgs/testOnDemandRTSPServer 8554
+# Output
+After fuzzing starts, out-live555/ will contain AFL-style queues and findings. Common directories/files include:
 
+out-live555/queue/
+Interesting testcases kept by the fuzzer.
+
+out-live555/crashes/ or out-live555/replayable-crashes/
+Crashing inputs (depending on your AFLNet variant’s naming).
+
+out-live555/hangs/ or out-live555/replayable-hangs/
+Hang-inducing inputs.
+
+out-live555/fuzzer_stats
+Summary stats (throughput, coverage, etc.).
 
